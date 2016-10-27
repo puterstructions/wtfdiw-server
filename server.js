@@ -56,7 +56,7 @@ app.get('/push', function(req, res) {
                 callback: 'dismissVote',
                 foreground: false
             }],
-            wantId: '-KPANpGgPDUjnWgZShot'
+            wantId: '0'
         }
     });
 
@@ -70,7 +70,14 @@ app.get('/push', function(req, res) {
     });
 
     sender.send(message, deviceTokens, RETRY_TIMES, function(result) {
-        res.status(200).send('pushed notification ' + deviceTokens);
+        res.status(200).send([
+            'pushed notification',
+            '<ul>',
+            '  <li>',
+            deviceTokens.join('</li><li>'),
+            '  </li>',
+            '</ul>'
+        ].join(''));
     }, function(err) {
         res.status(500).send('failed to push notification ');
     });
