@@ -1,15 +1,21 @@
 <html>
+<head>
+<script src="https://www.gstatic.com/firebasejs/3.5.2/firebase.js"></script>
+<script src="scripts/notification-tool.js"></script>
+</head>
 <body>
   <form action="" method="post" enctype="multipart/form-data">
     <div>
       <label for="name">User:</label>
-      <input type="text" id="user" name="user" placeholder="Select user" />
+      <select id="user" name="user" onChange="selectUser()" disabled>
+        <option>Loading...</option>
+      </select>
     </div>
     <div>
       <label for="want">Want:</label>
-      <input type="text" id="want" name="want" placeholder="Select want" />
+      <select id="want" name="want" onChange="selectWant()" disabled></select>
     </div>
-    <input type="submit" value="Push Notification" />
+    <input id="submitBtn" type="submit" value="Send Notification" disabled />
   </form>
 </body>
 </html>

@@ -21,6 +21,9 @@ var express = require('express'),
 firebase.initializeApp(config);
 db = firebase.database();
 
+// mount at local folder (to include html,js,css)
+app.use('/', express.static(__dirname + '/'));
+
 server = app.listen(3000, function() {
     console.log(' - server started up on port 3000');
 });
@@ -88,10 +91,9 @@ function pushNotification(fields, res) {
             }
         });
 
-    var userRef = db.ref('/users/' + fields.user);
-    userRef.once('value', function(usnapshot) {
-        var user = usnapshot.val(),
-            devices = user.devices,
+    var devicesRef = db.ref('/devices/' + fields.user);
+    devicesRef.once('value', function(dsnapshot) {
+        var devices = dsnapshot.val(),
             d;
         for (d in devices) {
             deviceTokens.push(devices[d].registrationId);
