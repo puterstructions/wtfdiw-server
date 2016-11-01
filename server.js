@@ -6,15 +6,15 @@ var express = require('express'),
     firebase = require('firebase'),
     app = express(),
     config = {
-        apiKey: 'AIzaSyBLCzU0yDC0tQa4HAmENDaSTkDTXjBxkoc',
-        authDomain: 'wtfdiw-b7b5d.firebaseapp.com',
-        databaseURL: 'https://wtfdiw-b7b5d.firebaseio.com',
-        storageBucket: 'wtfdiw-b7b5d.appspot.com',
+        apiKey: 'AIzaSyCa77pheg0bKgodo9Y3UZeWE7pZwKTWbFE',
+        authDomain: 'puterstructions-wtfdiw.firebaseapp.com',
+        databaseURL: 'https://puterstructions-wtfdiw.firebaseio.com',
+        storageBucket: 'puterstructions-wtfdiw.appspot.com',
+        messagingSenderId: '573855873198',
     },
     db,
     server,
-    GCM_API_KEY = 'AIzaSyAcKTPBZP3sgohe2VY76eF6r8Ic55tFM_Q', // server key
-    //GCM_API_KEY = 'AIzaSyCvxqkFVHrdkZQHZ2fv-PP_IRwe9-ddgdU', // android key
+    GCM_API_KEY = 'AIzaSyCa77pheg0bKgodo9Y3UZeWE7pZwKTWbFE',
     TTL = 3,
     RETRY_TIMES = 4;
 

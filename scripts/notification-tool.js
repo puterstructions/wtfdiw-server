@@ -1,8 +1,9 @@
 var config = {
-    apiKey: 'AIzaSyBLCzU0yDC0tQa4HAmENDaSTkDTXjBxkoc',
-    authDomain: 'wtfdiw-b7b5d.firebaseapp.com',
-    databaseURL: 'https://wtfdiw-b7b5d.firebaseio.com',
-    storageBucket: 'wtfdiw-b7b5d.appspot.com'
+    apiKey: 'AIzaSyCa77pheg0bKgodo9Y3UZeWE7pZwKTWbFE',
+    authDomain: 'puterstructions-wtfdiw.firebaseapp.com',
+    databaseURL: 'https://puterstructions-wtfdiw.firebaseio.com',
+    storageBucket: 'puterstructions-wtfdiw.appspot.com',
+    messagingSenderId: '573855873198'
 };
 firebase.initializeApp(config);
 
