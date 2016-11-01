@@ -6,3 +6,8 @@ branches:
 node_js:
   - "7.0"
 
+install:
+  - npm install
+
+script:
+  - echo yolo tests later
