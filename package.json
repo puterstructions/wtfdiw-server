@@ -3,8 +3,8 @@
   "description": "wtfdiw-server",
   "dependencies": {
     "express": "^4.14.0",
-    "firebase": "^3.5.1",
-    "formidable": "^1.0.17",
-    "node-gcm": "^0.14.4"
+    "fcm-push": "^1.1.0",
+    "firebase": "^3.5.3",
+    "formidable": "^1.0.17"
   }
 }

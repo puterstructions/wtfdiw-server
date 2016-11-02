@@ -2,8 +2,9 @@ var express = require('express'),
     fs = require('fs'),
     util = require('util'),
     formidable = require('formidable'),
-    gcm = require('node-gcm'),
     firebase = require('firebase'),
+    FCM = require('fcm-push'),
+    fcm,
     app = express(),
     config = {
         apiKey: 'AIzaSyCa77pheg0bKgodo9Y3UZeWE7pZwKTWbFE',
@@ -13,13 +14,15 @@ var express = require('express'),
         messagingSenderId: '573855873198',
     },
     db,
+    messaging,
     server,
-    GCM_API_KEY = 'AIzaSyCa77pheg0bKgodo9Y3UZeWE7pZwKTWbFE',
+    FCM_API_KEY = 'AIzaSyCX9cL4jjLr6f45H5CIZe_9BJz-v6fioHk',
     TTL = 3,
     RETRY_TIMES = 4;
 
 firebase.initializeApp(config);
 db = firebase.database();
+fcm = new FCM(FCM_API_KEY);
 
 // mount at local folder (to include html,js,css)
 app.use('/', express.static(__dirname + '/'));
@@ -60,13 +63,9 @@ app.post('/', function(req, res) {
 
 function pushNotification(fields, res) {
     var deviceTokens = [],
-        sender = new gcm.Sender(GCM_API_KEY),
-        message = new gcm.Message({
+        message = {
             collapseKey: 'wtfdiw',
             priority: 'high',
-            delayWhileIdle: true,
-            timeToLive: TTL,
-            contentAvailable: true,
             data: {
                 title: 'WTFDIW',
                 icon: 'ic_launcher',
@@ -89,7 +88,7 @@ function pushNotification(fields, res) {
                     foreground: false
                 }]
             }
-        });
+        };
 
     var devicesRef = db.ref('/devices/' + fields.user);
     devicesRef.once('value', function(dsnapshot) {
@@ -102,20 +101,32 @@ function pushNotification(fields, res) {
         var wantRef = db.ref('/wants/' + fields.user + '/' + fields.want);
         wantRef.once('value', function(wsnapshot) {
             var want = wsnapshot.val();
-            message.addData('wantId', fields.want);
-            message.addData('body', want.description);
+            message.data.wantId = fields.want;
+            message.data.body = want.description;
 
-            sender.send(message, deviceTokens, RETRY_TIMES, function(result) {
-                res.end(util.inspect({
-                    message: 'pushed notification',
-                    devices: deviceTokens
-                }));
-            }, function(err) {
-                res.end(util.inspect({
-                    message: 'failed to push notification',
-                    error: err
-                }));
-            });
+            var dt,
+                sent = 0;
+            for (dt in deviceTokens) {
+                message.to = deviceTokens[dt];
+                fcm.send(message, function(err, response) {
+                    if (err) {
+                        res.write(util.inspect({
+                            message: 'failed to push notification',
+                            error: err
+                        }));
+                    }
+                    res.write(util.inspect({
+                        message: 'pushed notification',
+                        device: deviceTokens[dt],
+                        response: response
+                    }));
+
+                    sent++;
+                    if (sent === deviceTokens.length) {
+                        res.end();
+                    }
+                });
+            }
         });
     });
 }
