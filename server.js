@@ -105,28 +105,35 @@ function pushNotification(fields, res) {
             message.data.body = want.description;
 
             var dt,
+                device,
                 sent = 0;
             for (dt in deviceTokens) {
-                message.to = deviceTokens[dt];
-                fcm.send(message, function(err, response) {
-                    if (err) {
-                        res.write(util.inspect({
-                            message: 'failed to push notification',
-                            error: err
-                        }));
-                    }
-                    res.write(util.inspect({
-                        message: 'pushed notification',
-                        device: deviceTokens[dt],
-                        response: response
-                    }));
-
-                    sent++;
-                    if (sent === deviceTokens.length) {
-                        res.end();
-                    }
-                });
+                device = deviceTokens[dt];
+                message.to = device;
+                asyncPush(device, message, res)
+                    .then(function() {
+                        sent++;
+                        if (sent === deviceTokens.length) {
+                            res.end();
+                        }
+                    });
             }
         });
+    });
+}
+
+function asyncPush(device, message, res) {
+    return fcm.send(message, function(err, response) {
+        if (err) {
+            res.write(util.inspect({
+                message: 'failed to push notification',
+                error: err
+            }));
+        }
+        res.write(util.inspect({
+            message: 'pushed notification',
+            device: device,
+            response: response
+        }) + "\n\n");
     });
 }
