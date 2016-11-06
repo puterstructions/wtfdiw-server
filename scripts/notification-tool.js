@@ -13,6 +13,31 @@ var database = firebase.database(),
     submitBtnEl;
 
 document.addEventListener('DOMContentLoaded', function() {
+  if (!window.localStorage.getItem('wtfdiw_token')) {
+    console.log('Not yet signed in');
+    document.getElementById('signInUI').style.display = 'block';
+  }
+});
+
+function onSignIn(googleUser) {
+  console.log('Signed in');
+  window.localStorage.setItem('wtfdiw_token', googleUser.getAuthResponse().id_token);
+
+  document.getElementById('signInUI').style.display = 'none';
+  document.getElementById('signedInUI').style.display = 'block';
+  document.getElementById('signedInEmail').innerText = googleUser.getBasicProfile().getEmail();
+
+  loadUsers();
+}
+
+function signOut() {
+  gapi.auth2.getAuthInstance().signOut().then(function () {
+    window.localStorage.removeItem('wtfdiw_token');
+    window.location.reload();
+  });
+}
+
+function loadUsers() {
     userEl = document.getElementById('user');
     wantEl = document.getElementById('want');
     submitBtnEl = document.getElementById('submitBtn');
@@ -38,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
         userEl.innerHTML = userOptions.join('');
         userEl.disabled = false;
     });
-});
+}
 
 function selectUser() {
     var sel = userEl.selectedIndex;

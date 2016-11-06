@@ -1,21 +1,32 @@
 <html>
 <head>
-<script src="https://www.gstatic.com/firebasejs/3.5.2/firebase.js"></script>
-<script src="scripts/notification-tool.js"></script>
+  <meta name="google-signin-client_id" content="573855873198-rvh7nl5r9pl8ai9d48rbkp247nrmme28.apps.googleusercontent.com">
+
+  <script src="https://www.gstatic.com/firebasejs/3.5.2/firebase.js"></script>
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+  <script src="scripts/notification-tool.js"></script>
 </head>
 <body>
-  <form action="" method="post" enctype="multipart/form-data">
-    <div>
-      <label for="name">User:</label>
-      <select id="user" name="user" onChange="selectUser()" disabled>
-        <option>Loading...</option>
-      </select>
-    </div>
-    <div>
-      <label for="want">Want:</label>
-      <select id="want" name="want" onChange="selectWant()" disabled></select>
-    </div>
-    <input id="submitBtn" type="submit" value="Send Notification" disabled />
-  </form>
+  <div id="signInUI" style="display: none;">
+    <p>You need to sign in.</p>
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+  </div>
+
+  <div id="signedInUI" style="display: none;">
+    <p>You are signed in as <span id="signedInEmail"></span>. <a href="#" onclick="signOut();">Sign out</a></p>
+    <form action="" method="post" enctype="multipart/form-data">
+      <div>
+        <label for="name">User:</label>
+        <select id="user" name="user" onChange="selectUser()" disabled>
+          <option>Loading...</option>
+        </select>
+      </div>
+      <div>
+        <label for="want">Want:</label>
+        <select id="want" name="want" onChange="selectWant()" disabled></select>
+      </div>
+      <input id="submitBtn" type="submit" value="Send Notification" disabled />
+    </form>
+  </div>
 </body>
 </html>
