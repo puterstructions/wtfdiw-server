@@ -25,7 +25,7 @@ db = firebase.database();
 fcm = new FCM(FCM_API_KEY);
 
 // mount at local folder (to include html,js,css)
-app.use('/', express.static(__dirname + '/'));
+app.use('/scripts', express.static(__dirname + '/scripts'));
 
 server = app.listen(3000, function() {
     console.log(' - server started up on port 3000');
@@ -45,7 +45,27 @@ app.get('/', function(req, res) {
     });
 });
 
-app.post('/', function(req, res) {
+app.get('/users', function(req, res) {
+  returnDbData(req, res, '/users');
+});
+
+app.get('/wants/:userId', function(req, res) {
+  returnDbData(req, res, '/wants/' + req.params['userId']);
+});
+
+function returnDbData(req, res, fbPath) {
+  db.ref(fbPath).once('value', function(snapshot) {
+    var data = JSON.stringify(snapshot.val());
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+      'Content-Length': data.length
+    });
+    res.write(data);
+    res.end();
+  });
+};
+
+app.post('/notify', function(req, res) {
     var form = new formidable.IncomingForm();
 
     form.parse(req, function(err, fields, files) {

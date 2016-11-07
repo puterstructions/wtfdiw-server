@@ -2,19 +2,21 @@
 <head>
   <meta name="google-signin-client_id" content="573855873198-rvh7nl5r9pl8ai9d48rbkp247nrmme28.apps.googleusercontent.com">
 
-  <script src="https://www.gstatic.com/firebasejs/3.5.2/firebase.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="https://apis.google.com/js/platform.js" async defer></script>
+
+  <script src="scripts/js.cookie.js"></script>
   <script src="scripts/notification-tool.js"></script>
 </head>
 <body>
-  <div id="signInUI" style="display: none;">
+  <div id="signInUI">
     <p>You need to sign in.</p>
     <div class="g-signin2" data-onsuccess="onSignIn"></div>
   </div>
 
   <div id="signedInUI" style="display: none;">
     <p>You are signed in as <span id="signedInEmail"></span>. <a href="#" onclick="signOut();">Sign out</a></p>
-    <form action="" method="post" enctype="multipart/form-data">
+    <form action="/notify" method="post" enctype="multipart/form-data">
       <div>
         <label for="name">User:</label>
         <select id="user" name="user" onChange="selectUser()" disabled>
