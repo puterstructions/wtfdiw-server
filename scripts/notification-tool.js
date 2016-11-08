@@ -22,7 +22,7 @@ function signOut() {
 }
 
 function loadUsers() {
-    $.getJSON('/users', function(users) {
+    $.getJSON('/api/users', function(users) {
         var u,
             usr,
             userOptions = ['<option value="">Select a user</option>'];
@@ -48,7 +48,7 @@ function selectUser() {
     if (sel) {
         wantEl.innerHTML = '<option>Loading...</option>';
 
-        $.getJSON('/wants/' + userEl.value, function(wants) {
+        $.getJSON('/api/wants/' + userEl.value, function(wants) {
             var w,
                 wnt,
                 wantOptions = ['<option value="">Select a want</option>'];

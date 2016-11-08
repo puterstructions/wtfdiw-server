@@ -16,7 +16,7 @@
 
   <div id="signedInUI" style="display: none;">
     <p>You are signed in as <span id="signedInEmail"></span>. <a href="#" onclick="signOut();">Sign out</a></p>
-    <form action="/notify" method="post" enctype="multipart/form-data">
+    <form action="/api/notify" method="post" enctype="multipart/form-data">
       <div>
         <label for="name">User:</label>
         <select id="user" name="user" onChange="selectUser()" disabled>
