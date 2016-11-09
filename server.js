@@ -9,21 +9,18 @@ var express = require('express'),
     CLIENT_ID = '573855873198-rvh7nl5r9pl8ai9d48rbkp247nrmme28.apps.googleusercontent.com',
     fcm,
     app = express(),
-    config = {
-        apiKey: 'AIzaSyCa77pheg0bKgodo9Y3UZeWE7pZwKTWbFE',
-        authDomain: 'puterstructions-wtfdiw.firebaseapp.com',
-        databaseURL: 'https://puterstructions-wtfdiw.firebaseio.com',
-        storageBucket: 'puterstructions-wtfdiw.appspot.com',
-        messagingSenderId: '573855873198',
-    },
     db,
     messaging,
     server,
-    FCM_API_KEY = 'AIzaSyCX9cL4jjLr6f45H5CIZe_9BJz-v6fioHk',
+    FCM_API_KEY = 'AIzaSyCX9cL4jjLr6f45H5CIZe_9BJz-v6fioHk', // FIXME
     TTL = 3,
     RETRY_TIMES = 4;
 
-firebase.initializeApp(config);
+firebase.initializeApp({
+  serviceAccount: __dirname + "/.firebaseServiceAccountCredentials.json",
+  databaseURL: "https://puterstructions-wtfdiw.firebaseio.com"
+});
+
 db = firebase.database();
 fcm = new FCM(FCM_API_KEY);
 
