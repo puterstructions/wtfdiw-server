@@ -1,26 +1,29 @@
-var config = {
-    apiKey: 'AIzaSyCa77pheg0bKgodo9Y3UZeWE7pZwKTWbFE',
-    authDomain: 'puterstructions-wtfdiw.firebaseapp.com',
-    databaseURL: 'https://puterstructions-wtfdiw.firebaseio.com',
-    storageBucket: 'puterstructions-wtfdiw.appspot.com',
-    messagingSenderId: '573855873198'
-};
-firebase.initializeApp(config);
+var userEl,
+    wantEl;
 
-var database = firebase.database(),
-    userEl,
-    wantEl,
-    submitBtnEl;
+function onSignIn(googleUser) {
+  Cookies.set('wtfdiw_token', googleUser.getAuthResponse().id_token);
 
-document.addEventListener('DOMContentLoaded', function() {
-    userEl = document.getElementById('user');
-    wantEl = document.getElementById('want');
-    submitBtnEl = document.getElementById('submitBtn');
+  document.getElementById('signInUI').style.display = 'none';
+  document.getElementById('signedInUI').style.display = 'block';
+  document.getElementById('signedInEmail').innerText = googleUser.getBasicProfile().getEmail();
 
-    var usersRef = database.ref('/users');
-    usersRef.on('value', function(snapshot) {
-        var users = snapshot.val(),
-            u,
+  userEl = document.getElementById('user'),
+  wantEl = document.getElementById('want'),
+
+  loadUsers();
+}
+
+function signOut() {
+  gapi.auth2.getAuthInstance().signOut().then(function () {
+    Cookies.remove('wtfdiw_token');
+    window.location.reload();
+  });
+}
+
+function loadUsers() {
+    $.getJSON('/api/users', function(users) {
+        var u,
             usr,
             userOptions = ['<option value="">Select a user</option>'];
         for (u in users) {
@@ -38,17 +41,15 @@ document.addEventListener('DOMContentLoaded', function() {
         userEl.innerHTML = userOptions.join('');
         userEl.disabled = false;
     });
-});
+}
 
 function selectUser() {
     var sel = userEl.selectedIndex;
     if (sel) {
         wantEl.innerHTML = '<option>Loading...</option>';
 
-        var wantsRef = database.ref('/wants/' + userEl.value);
-        wantsRef.on('value', function(snapshot) {
-            var wants = snapshot.val(),
-                w,
+        $.getJSON('/api/wants/' + userEl.value, function(wants) {
+            var w,
                 wnt,
                 wantOptions = ['<option value="">Select a want</option>'];
             for (w in wants) {
@@ -70,8 +71,7 @@ function selectUser() {
 }
 
 function selectWant() {
-    var sel = wantEl.selectedIndex;
-    if (sel) {
-        submitBtnEl.disabled = false;
+    if (wantEl.selectedIndex) {
+        document.getElementById('submitBtn').disabled = false;
     }
 }

@@ -1,9 +1,12 @@
 var express = require('express'),
+    cookieParser = require('cookie-parser'),
     fs = require('fs'),
+    request = require('request'),
     util = require('util'),
     formidable = require('formidable'),
     firebase = require('firebase'),
     FCM = require('fcm-push'),
+    CLIENT_ID = '573855873198-rvh7nl5r9pl8ai9d48rbkp247nrmme28.apps.googleusercontent.com',
     fcm,
     app = express(),
     config = {
@@ -24,15 +27,46 @@ firebase.initializeApp(config);
 db = firebase.database();
 fcm = new FCM(FCM_API_KEY);
 
-// mount at local folder (to include html,js,css)
-app.use('/', express.static(__dirname + '/'));
-
 server = app.listen(3000, function() {
     console.log(' - server started up on port 3000');
 });
 
-//-------------------------------------
-//- INDEX
+app.use('/scripts', express.static(__dirname + '/scripts'));
+app.use(cookieParser());
+app.use('/api', function(req, res, next) {
+    function validateAuthorization(error, response, body) {
+        if (isValidAuthorization(error, response, body)) {
+            next();
+        }
+        else {
+            res.writeHead(401);
+            res.end();
+        }
+    }
+
+    var token = req.cookies['wtfdiw_token'];
+    if (token) {
+        request('https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + token, validateAuthorization);
+    }
+    else {
+        validateAuthorization('Missing token', null, null);
+    }
+});
+
+function isValidAuthorization(error, response, body) {
+    if (error || response.statusCode != 200) {
+        console.log('Request, auth result: error=' + error);
+        return false;
+    }
+
+    var result = JSON.parse(body),
+        clientId = result['aud'],
+        email = (result['email'] || ''),
+        isValid = (clientId == CLIENT_ID && email.endsWith('@puterstructions.com'));
+
+    console.log('Request, auth result: email=' + email + ', client=' + clientId + ' valid=' + isValid);
+    return isValid;
+}
 
 app.get('/', function(req, res) {
     fs.readFile('form.html', function(err, data) {
@@ -45,7 +79,27 @@ app.get('/', function(req, res) {
     });
 });
 
-app.post('/', function(req, res) {
+app.get('/api/users', function(req, res) {
+  returnDbData(req, res, '/users');
+});
+
+app.get('/api/wants/:userId', function(req, res) {
+  returnDbData(req, res, '/wants/' + req.params['userId']);
+});
+
+function returnDbData(req, res, fbPath) {
+  db.ref(fbPath).once('value', function(snapshot) {
+    var data = JSON.stringify(snapshot.val());
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+      'Content-Length': data.length
+    });
+    res.write(data);
+    res.end();
+  });
+};
+
+app.post('/api/notify', function(req, res) {
     var form = new formidable.IncomingForm();
 
     form.parse(req, function(err, fields, files) {
